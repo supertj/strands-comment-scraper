@@ -49,7 +49,7 @@ agent(
 
 | Tool | What it returns |
 |---|---|
-| `comment_export_stats(path)` | An overview of every thread in the file: how many comments were fetched against how many the site reports, deleted and removed comments, top-level comments against replies, comments by the OP, the score spread, and the highest-scoring and most-replied comments with short excerpts. No full comment text. |
+| `comment_export_stats(path, thread=None)` | An overview of every thread in the file, or of one: how many comments were fetched against how many the site reports, deleted and removed comments, top-level comments against replies, comments by the OP, the score spread, and the highest-scoring and most-replied comments with short excerpts. No full comment text. |
 | `read_comment_export(path, thread=None, offset=0, limit=200)` | The post and the comments as numbered Markdown, in the same layout as the extension's Markdown export. Long threads come in pages, and each page ends by saying which `offset` to ask for next. |
 | `filter_comments(path, thread=None, contains=None, min_score=None, op_only=False, top_level_only=False, sort="thread", limit=50)` | The comments that meet all the conditions you pass. `contains` takes words that must all appear, ignoring case. `sort="score"` puts the highest score first. |
 | `get_comment(path, comment, thread=None)` | One comment by its number (`"c12"`, `"[c12]"` or `"12"`), with the chain of comments it replies to and its direct replies. |
@@ -91,11 +91,11 @@ That output comes from `tests/fixtures/which-crm.json`, a made-up thread used in
 
 ## Things to know
 
-- One tool result stays under about 60,000 characters. `read_comment_export` stops a page early rather than cut a comment in half, and a single comment longer than that is cut with a note saying so.
+- One tool result stays under about 60,000 characters. `read_comment_export` stops a page early rather than cut a comment in half. A long post can fill most of the first page, and a post or comment longer than a whole page is cut with a note saying so. For a batch export too big for one overview, `comment_export_stats` lists the remaining thread ids so the agent can ask for them one at a time.
 - Deleted and removed comments have no text. `read_comment_export` and `get_comment` show them as `(deleted)` or `(removed)` so the numbering and the reply chains stay intact; `filter_comments` leaves them out.
 - Hacker News doesn't show comment scores, so `min_score` matches nothing in a Hacker News thread.
 - An export can stop early, for example when Reddit rate-limits it or you stop it. Every result starts with the fetch counts from the file, and the tools don't fill gaps.
-- Exports don't contain usernames. `OP` marks comments by the person who started the thread.
+- Exports leave out who wrote each post and comment. A username someone typed inside a comment stays as written. `OP` marks comments by the person who started the thread.
 - Mistakes come back to the agent as error results it can act on: a file that isn't a Comment Scraper JSON export, a damaged thread, a comment number that doesn't exist, or a batch export where `thread` is needed. Each message says what to do next.
 - A "replies nested" export of a very long reply chain can go deeper than Python's JSON parser allows. The tools then say so; export the thread as "JSON, one row per comment" instead.
 

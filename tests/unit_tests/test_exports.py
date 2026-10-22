@@ -1,4 +1,5 @@
 import json
+import os
 from pathlib import Path
 from typing import Any
 
@@ -89,6 +90,14 @@ def test_missing_files_and_folders_say_what_went_wrong(tmp_path: Path) -> None:
         read_export(tmp_path / "missing.json")
     with pytest.raises(ValueError, match="Can't read"):
         read_export(tmp_path)
+
+
+@pytest.mark.skipif(not hasattr(os, "mkfifo"), reason="named pipes need a POSIX system")
+def test_a_named_pipe_is_refused_without_waiting_for_a_writer(tmp_path: Path) -> None:
+    pipe = tmp_path / "export.json"
+    os.mkfifo(pipe)
+    with pytest.raises(ValueError, match="it isn't a file"):
+        read_export(pipe)
 
 
 def test_export_with_no_threads_is_refused(tmp_path: Path) -> None:

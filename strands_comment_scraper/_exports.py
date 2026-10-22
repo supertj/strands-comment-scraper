@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import json
 import os
+import stat
 from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
@@ -19,7 +20,8 @@ from typing import Any, cast
 GENERATOR = "Comment Scraper"
 
 # Large enough for a 10,000-comment thread. The path comes from the model, so this stops a
-# wrong guess (a video, a disk image) from being read into memory.
+# wrong guess (a video, a disk image) from being read into memory. The read itself is capped
+# too, because a file can grow between the size check and the read.
 MAX_FILE_BYTES = 200 * 1024 * 1024
 
 
@@ -189,14 +191,21 @@ def read_export(path: str | os.PathLike[str]) -> list[Thread]:
         "CSV and Markdown exports can't be read."
     )
     try:
-        if file.stat().st_size > MAX_FILE_BYTES:
-            raise ValueError(not_an_export)
-        # utf-8-sig: a byte order mark, which some editors add on save, is skipped.
-        text = file.read_text(encoding="utf-8-sig")
-    except UnicodeDecodeError:
-        raise ValueError(not_an_export) from None
+        # Only regular files: opening a named pipe would wait forever, and a device can be
+        # endless. Folders land here too.
+        if not stat.S_ISREG(file.stat().st_mode):
+            raise ValueError(f"Can't read {file}: it isn't a file.")
+        with file.open("rb") as handle:
+            data = handle.read(MAX_FILE_BYTES + 1)
     except OSError as error:
         raise ValueError(f"Can't read {file}: {error.strerror or error}.") from None
+    if len(data) > MAX_FILE_BYTES:
+        raise ValueError(not_an_export)
+    try:
+        # utf-8-sig: a byte order mark, which some editors add on save, is skipped.
+        text = data.decode("utf-8-sig")
+    except UnicodeDecodeError:
+        raise ValueError(not_an_export) from None
 
     try:
         parsed = json.loads(text, parse_constant=_reject_constant)

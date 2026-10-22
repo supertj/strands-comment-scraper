@@ -93,7 +93,7 @@ def test_pages_continue_where_the_last_one_stopped() -> None:
     last = read_comment_export(CRM, offset=6)
     assert last.endswith("Showing comments 7–8 of 8. That's the end of the thread.")
     past_the_end = read_comment_export(CRM, offset=50)
-    assert past_the_end.endswith("Showing comments 8–8 of 8. That's the end of the thread.")
+    assert past_the_end.endswith("Offset 50 is past the end: this thread has 8 comments.")
 
 
 def test_a_page_stops_at_the_size_budget_without_cutting_a_comment(tmp_path: Path) -> None:
@@ -113,6 +113,39 @@ def test_one_comment_longer_than_a_page_is_cut_and_says_so(tmp_path: Path) -> No
     assert len(text) <= MAX_RESULT_CHARS + 200
     assert "(cut here: this item is longer than one response allows)" in text
     assert text.endswith("That's the end of the thread.")
+
+
+def test_a_long_post_keeps_its_ending_and_comments_follow(tmp_path: Path) -> None:
+    body = "p" * 44_990 + " THE END."
+    post = record(None, None, body=body)
+    comments = [record(f"c{n}", "t1", body="x" * 2_000) for n in range(20)]
+    path = write_export(tmp_path, {"meta": META, "records": [post, *comments]})
+    first = read_comment_export(str(path))
+    assert body in first and "cut here" not in first
+    shown = len(numbers_in(first))
+    assert 1 <= shown < 20
+    assert first.endswith(f"again with offset={shown} for more.")
+    assert "## Post" not in read_comment_export(str(path), offset=shown)
+
+
+def test_a_post_longer_than_a_page_is_cut_and_the_next_page_moves_on(tmp_path: Path) -> None:
+    post = record(None, None, body="p" * 100_000)
+    path = write_export(
+        tmp_path,
+        {
+            "meta": META,
+            "records": [
+                post,
+                record("c1", "t1", body="x" * 2_000),
+                record("c2", "t1", body="x" * 2_000),
+            ],
+        },
+    )
+    first = read_comment_export(str(path))
+    assert len(first) <= MAX_RESULT_CHARS + 200
+    assert "(cut here: this item is longer than one response allows)" in first
+    assert numbers_in(first) == ["[c1]"]
+    assert first.endswith("again with offset=1 for more.")
 
 
 @pytest.mark.parametrize(("limit", "offset"), [(0, 0), (501, 0), (10, -1)])
@@ -280,6 +313,33 @@ def test_stats_for_every_thread_in_a_batch_export() -> None:
         "- Thread: hn:40002 · Hacker News · https://news.ycombinator.com/item?id=40002\n"
     ) in text
     assert "- No comments in this export.\n\nComment text is quoted" in text
+
+
+def test_stats_for_a_big_batch_stay_inside_the_budget_and_list_the_rest(tmp_path: Path) -> None:
+    def thread(index: int) -> dict[str, Any]:
+        meta = {**META, "thread_id": f"t{index}", "thread_title": f"Thread number {index}"}
+        records = [record(None, None)] + [
+            record(f"c{index}-{n}", f"t{index}", body="w " * 200, score=n) for n in range(12)
+        ]
+        return {"meta": meta, "records": records}
+
+    path = str(write_export(tmp_path, *[thread(index) for index in range(100)]))
+    text = comment_export_stats(path)
+    assert len(text) <= MAX_RESULT_CHARS
+    shown = text.count("\n## Thread number ")
+    assert 10 < shown < 100
+    assert f"{100 - shown} more threads didn't fit in one response." in text
+    assert "- reddit:t99: Thread number 99\n" in text
+
+    one = comment_export_stats(path, thread="reddit:t99")
+    assert one.startswith("## Thread number 99\n")
+    assert "holds" not in one and "didn't fit" not in one
+
+
+def test_stats_name_at_most_twenty_op_comments(tmp_path: Path) -> None:
+    path = thread_file(tmp_path, [record(f"c{n}", "t1", is_op=True) for n in range(25)])
+    assert "- By the OP: 25 ([c1], [c2]," in comment_export_stats(path)
+    assert "[c20], …)\n" in comment_export_stats(path)
 
 
 def test_stats_cut_long_excerpts_and_note_hidden_scores(tmp_path: Path) -> None:

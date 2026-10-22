@@ -237,7 +237,10 @@ def read_comment_export(
             body = f"({post['comment_state']})"
         elif post["body"]:
             body = "\n".join(_escape_line(line) for line in post["body"].split("\n"))
-            body = _clip(body, MAX_RESULT_CHARS // 3)
+            # The post may take most of the first page; comments then start on the next one.
+            # Room is left for one comment so that every page moves the offset forward.
+            room = MAX_RESULT_CHARS - sum(len(line) + 1 for line in lines) - 2_500
+            body = _clip(body, room)
         else:
             body = "(no text)"
         lines += [f"## Post (score {_score(post)})", "", body, ""]
@@ -256,15 +259,16 @@ def read_comment_export(
 
     if not comments:
         lines.append("This export has no comments.")
+    elif offset >= len(comments):
+        lines.append(f"Offset {offset} is past the end: this thread has {len(comments)} comments.")
     elif end < len(comments):
         lines.append(
             f"Showing comments {offset + 1}–{end} of {len(comments)}. "
             f"Call read_comment_export again with offset={end} for more."
         )
     else:
-        first = min(offset + 1, len(comments))
         lines.append(
-            f"Showing comments {first}–{len(comments)} of {len(comments)}. "
+            f"Showing comments {offset + 1}–{len(comments)} of {len(comments)}. "
             "That's the end of the thread."
         )
     return "\n".join(lines)
@@ -454,7 +458,8 @@ def _thread_stats(thread: Thread) -> list[str]:
         f"- Shape: {top_level} top-level, {_count(len(comments) - top_level, 'reply', 'replies')}, "
         f"deepest reply at depth {max(depths, default=0)}"
         + (f", {orphans} replying to comments that weren't fetched" if orphans else ""),
-        f"- By the OP: {len(by_op)}" + (f" ({', '.join(by_op[:20])})" if by_op else ""),
+        f"- By the OP: {len(by_op)}"
+        + (f" ({', '.join(by_op[:20])}{', …' if len(by_op) > 20 else ''})" if by_op else ""),
         f"- Edited: {edited}",
         f"- Posted between {created[0]} and {created[-1]}",
     ]
@@ -497,8 +502,8 @@ def _thread_stats(thread: Thread) -> list[str]:
 
 
 @tool
-def comment_export_stats(path: str) -> str:
-    """Summarise every thread in a Comment Scraper JSON export, without the comment text.
+def comment_export_stats(path: str, thread: str | None = None) -> str:
+    """Summarise the threads in a Comment Scraper JSON export, without the comment text.
 
     For each thread: how many comments were fetched against how many the site reports, how
     many are deleted or removed, top-level comments against replies, comments by the person
@@ -508,14 +513,27 @@ def comment_export_stats(path: str) -> str:
 
     Args:
         path: Path to the export, a .json file saved by the Comment Scraper browser extension.
+        thread: Only this thread, by id like "reddit:1abcxyz" or by words from its title.
+            Leave it out to summarise every thread in the file.
     """
     threads = read_export(path)
-    lines = []
-    if len(threads) > 1:
-        lines += [f"{path} holds {len(threads)} threads.", ""]
-    for index, item in enumerate(threads):
-        if index:
-            lines.append("")
-        lines += _thread_stats(item)
+    if thread is not None and thread.strip():
+        threads = [_pick_thread(threads, path, thread)]
+    lines = [f"{path} holds {len(threads)} threads.", ""] if len(threads) > 1 else []
+    # A batch export can hold dozens of threads. The ones that don't fit are listed by id
+    # so the model can ask for them one at a time.
+    sections = _fit(["\n".join(_thread_stats(item)) for item in threads], MAX_RESULT_CHARS - 10_000)
+    lines.append("\n\n".join(sections))
+    rest = threads[len(sections) :]
+    if rest:
+        listed = _fit([f"- {item.id}: {_title(item)}" for item in rest], 8_000)
+        lines += [
+            "",
+            f"{len(rest)} more threads didn't fit in one response. Call comment_export_stats "
+            "again with thread set to one of these ids:",
+            "\n".join(listed),
+        ]
+        if len(listed) < len(rest):
+            lines.append(f"…and {len(rest) - len(listed)} more.")
     lines += ["", DATA_NOT_INSTRUCTIONS]
     return "\n".join(lines)
