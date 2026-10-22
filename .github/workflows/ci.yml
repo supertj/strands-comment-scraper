@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Oldest supported Python with the oldest strands-agents the package allows.
+          - python: "3.10"
+            resolution: lowest-direct
+          - python: "3.13"
+            resolution: highest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: astral-sh/setup-uv@v6
+      - name: Lint and type check
+        if: matrix.resolution == 'highest'
+        run: |
+          uv run --python ${{ matrix.python }} ruff check .
+          uv run --python ${{ matrix.python }} ruff format --check .
+          uv run --python ${{ matrix.python }} mypy strands_comment_scraper tests
+      - name: Unit tests (network disabled)
+        run: >
+          uv run --python ${{ matrix.python }} --resolution ${{ matrix.resolution }}
+          pytest --disable-socket --allow-unix-socket tests/unit_tests
+      - name: Build
+        if: matrix.resolution == 'highest'
+        run: uv build

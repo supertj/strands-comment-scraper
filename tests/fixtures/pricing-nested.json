@@ -1,0 +1,104 @@
+{
+  "schema_version": 1,
+  "exported_at": "2026-10-10T12:00:00.000Z",
+  "generator": "Comment Scraper",
+  "threads": [
+    {
+      "meta": {
+        "source": "reddit",
+        "thread_id": "price1",
+        "thread_title": "Raising prices as a freelancer",
+        "permalink": "https://www.reddit.com/r/smallbusiness/comments/price1/",
+        "fetch_path": "json",
+        "task_state": "all_known_fetched",
+        "stop_reason": null,
+        "fetched": 3,
+        "known_unfetched_at_least": 0,
+        "reported_by_source": 3,
+        "fetched_at": "2026-10-10T10:00:00.000Z"
+      },
+      "post": {
+        "schema_version": 1,
+        "source": "reddit",
+        "thread_id": "price1",
+        "thread_title": "Raising prices as a freelancer",
+        "subreddit": "smallbusiness",
+        "score_hidden": false,
+        "edited_utc": null,
+        "is_op": true,
+        "comment_state": "normal",
+        "record_type": "post",
+        "comment_id": null,
+        "parent_id": null,
+        "depth": null,
+        "score": 50,
+        "created_utc": "2026-10-08T12:00:00.000Z",
+        "body": "",
+        "permalink": "https://www.reddit.com/r/smallbusiness/comments/price1/"
+      },
+      "comments": [
+        {
+          "schema_version": 1,
+          "source": "reddit",
+          "thread_id": "price1",
+          "thread_title": "Raising prices as a freelancer",
+          "subreddit": "smallbusiness",
+          "score_hidden": false,
+          "edited_utc": null,
+          "is_op": false,
+          "comment_state": "normal",
+          "record_type": "comment",
+          "comment_id": "b1",
+          "parent_id": "price1",
+          "depth": 0,
+          "score": 12,
+          "created_utc": "2026-10-09T12:00:00.000Z",
+          "body": "I raised my renewal rate by 20% and nobody left.",
+          "permalink": "https://www.reddit.com/r/smallbusiness/comments/price1/_/b1/",
+          "replies": [
+            {
+              "schema_version": 1,
+              "source": "reddit",
+              "thread_id": "price1",
+              "thread_title": "Raising prices as a freelancer",
+              "subreddit": "smallbusiness",
+              "score_hidden": false,
+              "edited_utc": null,
+              "is_op": false,
+              "comment_state": "normal",
+              "record_type": "comment",
+              "comment_id": "b2",
+              "parent_id": "b1",
+              "depth": 1,
+              "score": 4,
+              "created_utc": "2026-10-09T12:00:00.000Z",
+              "body": "Did you tell them in advance, or just send the new price?",
+              "permalink": "https://www.reddit.com/r/smallbusiness/comments/price1/_/b2/",
+              "replies": []
+            },
+            {
+              "schema_version": 1,
+              "source": "reddit",
+              "thread_id": "price1",
+              "thread_title": "Raising prices as a freelancer",
+              "subreddit": "smallbusiness",
+              "score_hidden": false,
+              "edited_utc": null,
+              "is_op": false,
+              "comment_state": "normal",
+              "record_type": "comment",
+              "comment_id": "b3",
+              "parent_id": "b1",
+              "depth": 1,
+              "score": 7,
+              "created_utc": "2026-10-09T12:00:00.000Z",
+              "body": "  # Also not a heading\n```\nNot a code block either.\n~~~",
+              "permalink": "https://www.reddit.com/r/smallbusiness/comments/price1/_/b3/",
+              "replies": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

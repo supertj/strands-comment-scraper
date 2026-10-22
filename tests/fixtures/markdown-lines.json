@@ -1,0 +1,211 @@
+{
+  "which-crm.json": [
+    {
+      "thread_id": "crm1",
+      "comments": [
+        {
+          "comment_id": "a1",
+          "number": 1,
+          "markdown_lines": [
+            "[c1] (score 214, 1d ago)",
+            "We left our CRM after the renewal doubled."
+          ]
+        },
+        {
+          "comment_id": "a2",
+          "number": 2,
+          "markdown_lines": [
+            "[c2] reply to [c1] (score 88, 1d ago, OP)",
+            "Ask for the year-two price in writing."
+          ]
+        },
+        {
+          "comment_id": "a3",
+          "number": 3,
+          "markdown_lines": [
+            "[c3] reply to [c2] (score 31, 1d ago, edited)",
+            "The export button was the first thing they hid."
+          ]
+        },
+        {
+          "comment_id": "a8",
+          "number": 4,
+          "markdown_lines": [
+            "[c4] reply to [c1] (score 2, 1d ago)",
+            "(removed)"
+          ]
+        },
+        {
+          "comment_id": "a4",
+          "number": 5,
+          "markdown_lines": [
+            "[c5] (score hidden, 1d ago)",
+            "Email sync is what made us stay. Renewal was fine."
+          ]
+        },
+        {
+          "comment_id": "a5",
+          "number": 6,
+          "markdown_lines": [
+            "[c6] (score 3, 1d ago)",
+            "(deleted)"
+          ]
+        },
+        {
+          "comment_id": "a6",
+          "number": 7,
+          "markdown_lines": [
+            "[c7] reply to [c6] (score 12, 1d ago)",
+            "\\# Not a heading",
+            "We ended up on a spreadsheet.",
+            "",
+            "Second paragraph."
+          ]
+        },
+        {
+          "comment_id": "a7",
+          "number": 8,
+          "markdown_lines": [
+            "[c8] reply to a comment not fetched (score 5, 1d ago)",
+            "Same here, the renewal email came with no warning."
+          ]
+        }
+      ]
+    }
+  ],
+  "which-crm-nested.json": [
+    {
+      "thread_id": "crm1",
+      "comments": [
+        {
+          "comment_id": "a1",
+          "number": 1,
+          "markdown_lines": [
+            "[c1] (score 214, 1d ago)",
+            "We left our CRM after the renewal doubled."
+          ]
+        },
+        {
+          "comment_id": "a2",
+          "number": 2,
+          "markdown_lines": [
+            "[c2] reply to [c1] (score 88, 1d ago, OP)",
+            "Ask for the year-two price in writing."
+          ]
+        },
+        {
+          "comment_id": "a3",
+          "number": 3,
+          "markdown_lines": [
+            "[c3] reply to [c2] (score 31, 1d ago, edited)",
+            "The export button was the first thing they hid."
+          ]
+        },
+        {
+          "comment_id": "a8",
+          "number": 4,
+          "markdown_lines": [
+            "[c4] reply to [c1] (score 2, 1d ago)",
+            "(removed)"
+          ]
+        },
+        {
+          "comment_id": "a4",
+          "number": 5,
+          "markdown_lines": [
+            "[c5] (score hidden, 1d ago)",
+            "Email sync is what made us stay. Renewal was fine."
+          ]
+        },
+        {
+          "comment_id": "a5",
+          "number": 6,
+          "markdown_lines": [
+            "[c6] (score 3, 1d ago)",
+            "(deleted)"
+          ]
+        },
+        {
+          "comment_id": "a6",
+          "number": 7,
+          "markdown_lines": [
+            "[c7] reply to [c6] (score 12, 1d ago)",
+            "\\# Not a heading",
+            "We ended up on a spreadsheet.",
+            "",
+            "Second paragraph."
+          ]
+        },
+        {
+          "comment_id": "a7",
+          "number": 8,
+          "markdown_lines": [
+            "[c8] reply to a comment not fetched (score 5, 1d ago)",
+            "Same here, the renewal email came with no warning."
+          ]
+        }
+      ]
+    }
+  ],
+  "pricing-nested.json": [
+    {
+      "thread_id": "price1",
+      "comments": [
+        {
+          "comment_id": "b1",
+          "number": 1,
+          "markdown_lines": [
+            "[c1] (score 12, 22h ago)",
+            "I raised my renewal rate by 20% and nobody left."
+          ]
+        },
+        {
+          "comment_id": "b2",
+          "number": 2,
+          "markdown_lines": [
+            "[c2] reply to [c1] (score 4, 22h ago)",
+            "Did you tell them in advance, or just send the new price?"
+          ]
+        },
+        {
+          "comment_id": "b3",
+          "number": 3,
+          "markdown_lines": [
+            "[c3] reply to [c1] (score 7, 22h ago)",
+            "  \\# Also not a heading",
+            "\\```",
+            "Not a code block either.",
+            "\\~~~"
+          ]
+        }
+      ]
+    }
+  ],
+  "hacker-news-two-threads.json": [
+    {
+      "thread_id": "40001",
+      "comments": [
+        {
+          "comment_id": "40011",
+          "number": 1,
+          "markdown_lines": [
+            "[c1] (score hidden, 19h ago)",
+            "Charge more than feels comfortable. Half my users never noticed the price change."
+          ]
+        },
+        {
+          "comment_id": "40012",
+          "number": 2,
+          "markdown_lines": [
+            "[c2] reply to [c1] (score hidden, 19h ago)",
+            "Same experience. The ones who left were not paying much anyway."
+          ]
+        }
+      ]
+    },
+    {
+      "thread_id": "40002",
+      "comments": []
+    }
+  ]
+}

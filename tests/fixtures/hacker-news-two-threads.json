@@ -1,0 +1,117 @@
+{
+  "schema_version": 1,
+  "exported_at": "2026-10-10T12:00:00.000Z",
+  "generator": "Comment Scraper",
+  "threads": [
+    {
+      "meta": {
+        "source": "hn",
+        "thread_id": "40001",
+        "thread_title": "Ask HN: How do you price a side project?",
+        "permalink": "https://news.ycombinator.com/item?id=40001",
+        "fetch_path": "api",
+        "task_state": "limit_reached",
+        "stop_reason": "comment_limit",
+        "fetched": 2,
+        "known_unfetched_at_least": 1,
+        "reported_by_source": 3,
+        "fetched_at": "2026-10-10T07:00:00.000Z"
+      },
+      "records": [
+        {
+          "schema_version": 1,
+          "source": "hn",
+          "thread_id": "40001",
+          "thread_title": "Ask HN: How do you price a side project?",
+          "subreddit": null,
+          "score_hidden": false,
+          "edited_utc": null,
+          "is_op": true,
+          "comment_state": "normal",
+          "record_type": "post",
+          "comment_id": null,
+          "parent_id": null,
+          "depth": null,
+          "score": 120,
+          "created_utc": "2026-10-08T12:00:00.000Z",
+          "body": "I have 30 paying users and no idea what to charge.",
+          "permalink": "https://news.ycombinator.com/item?id=40001"
+        },
+        {
+          "schema_version": 1,
+          "source": "hn",
+          "thread_id": "40001",
+          "thread_title": "Ask HN: How do you price a side project?",
+          "subreddit": null,
+          "score_hidden": false,
+          "edited_utc": null,
+          "is_op": false,
+          "comment_state": "normal",
+          "record_type": "comment",
+          "comment_id": "40011",
+          "parent_id": "40001",
+          "depth": 0,
+          "score": null,
+          "created_utc": "2026-10-09T12:00:00.000Z",
+          "body": "Charge more than feels comfortable. Half my users never noticed the price change.",
+          "permalink": "https://news.ycombinator.com/item?id=40011"
+        },
+        {
+          "schema_version": 1,
+          "source": "hn",
+          "thread_id": "40001",
+          "thread_title": "Ask HN: How do you price a side project?",
+          "subreddit": null,
+          "score_hidden": false,
+          "edited_utc": null,
+          "is_op": false,
+          "comment_state": "normal",
+          "record_type": "comment",
+          "comment_id": "40012",
+          "parent_id": "40011",
+          "depth": 1,
+          "score": null,
+          "created_utc": "2026-10-09T12:00:00.000Z",
+          "body": "Same experience. The ones who left were not paying much anyway.",
+          "permalink": "https://news.ycombinator.com/item?id=40012"
+        }
+      ]
+    },
+    {
+      "meta": {
+        "source": "hn",
+        "thread_id": "40002",
+        "thread_title": "Show HN: A tiny invoice generator",
+        "permalink": "https://news.ycombinator.com/item?id=40002",
+        "fetch_path": "api",
+        "task_state": "all_known_fetched",
+        "stop_reason": null,
+        "fetched": 0,
+        "known_unfetched_at_least": 0,
+        "reported_by_source": null,
+        "fetched_at": "2026-10-10T06:00:00.000Z"
+      },
+      "records": [
+        {
+          "schema_version": 1,
+          "source": "hn",
+          "thread_id": "40002",
+          "thread_title": "Show HN: A tiny invoice generator",
+          "subreddit": null,
+          "score_hidden": false,
+          "edited_utc": null,
+          "is_op": true,
+          "comment_state": "normal",
+          "record_type": "post",
+          "comment_id": null,
+          "parent_id": null,
+          "depth": null,
+          "score": 120,
+          "created_utc": "2026-10-08T12:00:00.000Z",
+          "body": "",
+          "permalink": "https://news.ycombinator.com/item?id=40002"
+        }
+      ]
+    }
+  ]
+}

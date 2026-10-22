@@ -1,0 +1,46 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "strands-comment-scraper"
+version = "0.1.0"
+description = "Strands Agents tools that read, filter and summarise Reddit and Hacker News threads exported with Comment Scraper. Local JSON files only, no network requests."
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Super Lede", email = "hello@comment-scraper.com" }]
+requires-python = ">=3.10"
+dependencies = ["strands-agents>=1.0.0,<2.0.0"]
+keywords = ["strands", "strands-agents", "agents", "tool", "reddit", "hacker-news", "comment-scraper"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Topic :: Text Processing",
+]
+
+[project.urls]
+Homepage = "https://comment-scraper.com/strands"
+Source = "https://github.com/supertj/strands-comment-scraper"
+Issues = "https://github.com/supertj/strands-comment-scraper/issues"
+
+[dependency-groups]
+test = ["pytest>=8", "pytest-socket>=0.7"]
+lint = ["ruff>=0.6", "mypy>=1.10"]
+
+[tool.uv]
+default-groups = ["test", "lint"]
+
+[tool.hatch.build.targets.sdist]
+include = ["strands_comment_scraper", "tests", "README.md", "LICENSE"]
+
+[tool.pytest.ini_options]
+addopts = "--strict-markers --strict-config"
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "T201", "UP"]
+
+[tool.mypy]
+strict = true
