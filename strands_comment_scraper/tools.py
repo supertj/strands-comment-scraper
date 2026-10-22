@@ -237,10 +237,12 @@ def read_comment_export(
             body = f"({post['comment_state']})"
         elif post["body"]:
             body = "\n".join(_escape_line(line) for line in post["body"].split("\n"))
-            # The post may take most of the first page; comments then start on the next one.
-            # Room is left for one comment so that every page moves the offset forward.
-            room = MAX_RESULT_CHARS - sum(len(line) + 1 for line in lines) - 2_500
-            body = _clip(body, room)
+            # A long post may fill most of the first page, but the first comment must still
+            # fit whole: the page counts it as read, so a cut comment would lose its ending.
+            # Up to half a page is held for it, more than any Reddit comment needs.
+            first = len(_comment_block(picked, comments[0])) if comments else 0
+            reserve = min(first, MAX_RESULT_CHARS // 2) + 200
+            body = _clip(body, MAX_RESULT_CHARS - sum(len(line) + 1 for line in lines) - reserve)
         else:
             body = "(no text)"
         lines += [f"## Post (score {_score(post)})", "", body, ""]
@@ -502,38 +504,41 @@ def _thread_stats(thread: Thread) -> list[str]:
 
 
 @tool
-def comment_export_stats(path: str, thread: str | None = None) -> str:
+def comment_export_stats(path: str, thread: str | None = None, offset: int = 0) -> str:
     """Summarise the threads in a Comment Scraper JSON export, without the comment text.
 
     For each thread: how many comments were fetched against how many the site reports, how
     many are deleted or removed, top-level comments against replies, comments by the person
     who started the thread, the score spread, the highest-scoring comments and the comments
     with the most replies, each with its [cN] number and a short excerpt. Call it first to
-    see what a file holds and which thread ids it has.
+    see what a file holds and which thread ids it has. A big batch export comes in parts:
+    when the result says there are more threads, call again with the offset it gives.
 
     Args:
         path: Path to the export, a .json file saved by the Comment Scraper browser extension.
         thread: Only this thread, by id like "reddit:1abcxyz" or by words from its title.
             Leave it out to summarise every thread in the file.
+        offset: Number of threads to skip, for the next part of a big batch export.
     """
+    if offset < 0:
+        raise ValueError("offset can't be negative.")
     threads = read_export(path)
     if thread is not None and thread.strip():
         threads = [_pick_thread(threads, path, thread)]
     lines = [f"{path} holds {len(threads)} threads.", ""] if len(threads) > 1 else []
-    # A batch export can hold dozens of threads. The ones that don't fit are listed by id
-    # so the model can ask for them one at a time.
-    sections = _fit(["\n".join(_thread_stats(item)) for item in threads], MAX_RESULT_CHARS - 10_000)
+    if offset >= len(threads):
+        lines.append(f"Offset {offset} is past the end: the file holds {len(threads)} threads.")
+        return "\n".join(lines)
+    sections = _fit(
+        ["\n".join(_thread_stats(item)) for item in threads[offset:]], MAX_RESULT_CHARS - 1_000
+    )
     lines.append("\n\n".join(sections))
-    rest = threads[len(sections) :]
-    if rest:
-        listed = _fit([f"- {item.id}: {_title(item)}" for item in rest], 8_000)
+    end = offset + len(sections)
+    if end < len(threads):
         lines += [
             "",
-            f"{len(rest)} more threads didn't fit in one response. Call comment_export_stats "
-            "again with thread set to one of these ids:",
-            "\n".join(listed),
+            f"Showing threads {offset + 1}–{end} of {len(threads)}. Call comment_export_stats "
+            f"again with offset={end} for the rest.",
         ]
-        if len(listed) < len(rest):
-            lines.append(f"…and {len(rest) - len(listed)} more.")
     lines += ["", DATA_NOT_INSTRUCTIONS]
     return "\n".join(lines)
